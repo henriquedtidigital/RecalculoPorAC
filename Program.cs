@@ -8,7 +8,7 @@ var novoAc = 0.701m; // O valor do novo AC vem da tela.
  * É Traço Manual de Concreto;
  * Possui Traço Econômico Ativo.
  */
-var traco = Tracos.CriarTracoManualConcretoMock();
+var traco = TracosMock.CriarTracoManualConcretoMock_SemAdicaoCimenticia();
 
 Tracos.ValidarInsumoTraco(traco);
 
@@ -16,25 +16,27 @@ Tracos.PreencherRazaoTodosInsumosPorGrupo(traco);
 
 var novoConsumoTe = traco.Agua / novoAc; // Consumo é quantidade do aglomerante em KG
 
-var volumeAglomerante = Tracos.CalcularVolumeAglomerante(traco, novoConsumoTe); // Volume em LT
+var novoVolumeAglomeranteTe = Tracos.CalcularVolumeAglomerante(traco, novoConsumoTe); // Volume em LT
 
-var volumeInsumos = Tracos.CalcularVolumeInsumos(traco); //Vou precisar do volume total? o novo aglomerante não deveria entrar aqui?
+var volumeInsumosOriginal = Tracos.CalcularVolumeInsumos(traco);
 
-var volumeArgamassa = Tracos.CalcularVolumeArgamassa(traco, volumeInsumos);
+var volumeArgamassaOriginal = Tracos.CalcularVolumeArgamassa(traco, volumeInsumosOriginal);
 
-var volumeAreia = volumeArgamassa - volumeAglomerante;
+var novoVolumeAreia = volumeArgamassaOriginal - novoVolumeAglomeranteTe; 
 
-var volumeBrita = volumeInsumos - volumeArgamassa;
+var novoVolumeBrita = volumeInsumosOriginal - volumeArgamassaOriginal;
 
-var quantidadeAreia = Tracos.CalcularQuantidadeAreia(traco, volumeAreia);
+var novaQuantidadeAreia = Tracos.CalcularQuantidadeAreia(traco, novoVolumeAreia);
 
-var quantidadeBrita = Tracos.CalcularQuantidadeBrita(traco, volumeBrita);
+var novaQuantidadeBrita = Tracos.CalcularQuantidadeBrita(traco, novoVolumeBrita);
 
 Tracos.RecalcularAglomeranteTe(traco, novoConsumoTe);
 
-Tracos.RecalcularAreiaTe(traco, quantidadeAreia);
+Tracos.RecalcularAreiaTe(traco, novaQuantidadeAreia);
 
-Tracos.RecalcularBritaTe(traco, quantidadeBrita);
+Tracos.RecalcularBritaTe(traco, novaQuantidadeBrita);
+
+Tracos.RecalcularAditivosTe(traco, novoConsumoTe);
 
 
 

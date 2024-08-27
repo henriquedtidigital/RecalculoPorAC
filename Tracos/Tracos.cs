@@ -3,75 +3,8 @@ using RecalculoPorAC.Enums;
 
 namespace RecalculoPorAC.Tracos;
 
-public class Tracos
+public static class Tracos
 {
-    public static TracoDto CriarTracoManualConcretoMock()
-    {
-        return new TracoDto
-        {
-            Agua = 215,
-            Insumos = new List<InsumoDto>
-            {
-                 new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Areia,
-                    CodigoInsumo = 2,
-                    Quantidade = 691,
-                    QuantidadeTe = 612,
-                    DensidadeReal = 2.535m
-                },
-                  new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Areia,
-                    CodigoInsumo = 14,
-                    Quantidade = 296,
-                    QuantidadeTe = 408,
-                    DensidadeReal = 2.688m
-                },
-                  new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Brita,
-                    CodigoInsumo = 1,
-                    Quantidade = 800,
-                    QuantidadeTe = 778,
-                    DensidadeReal = 2.646m
-                },
-                new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Cimento,
-                    CodigoInsumo = 156,
-                    Quantidade = 346,
-                    QuantidadeTe = 335,
-                    DensidadeReal = 3.15m
-                },
-                 new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Aditivo,
-                    CodigoInsumo = 244,
-                    Quantidade = 3.29m,
-                    QuantidadeTe = 3,
-                    DensidadeReal = 1.07m
-                },
-                  new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Aditivo,
-                    CodigoInsumo = 410,
-                    Quantidade = 0.87m,
-                    QuantidadeTe = 0.842m,
-                    DensidadeReal = 1.24m
-                },
-                   new InsumoDto
-                {
-                    TipoInsumo = TipoInsumo.Aditivo,
-                    CodigoInsumo = 420,
-                    Quantidade = 2.43m,
-                    QuantidadeTe = 2,
-                    DensidadeReal = 1.13m
-                },
-            }
-        };
-    }
-
     public static void ValidarInsumoTraco(TracoDto traco)
     {
         /* Os Insumos do traço devem ter:
@@ -117,7 +50,6 @@ public class Tracos
             i => i.TipoInsumo == TipoInsumo.Cimento ||
             i.TipoInsumo == TipoInsumo.AdicaoCimenticia ||
             i.TipoInsumo == TipoInsumo.Areia).Sum(i => i.Quantidade);
-        //Duvida Adição em saco é considerada??
 
         var quantidadeBrita = traco.Insumos.Where(i => i.TipoInsumo == TipoInsumo.Brita).Sum(i => i.Quantidade);
 
@@ -178,5 +110,15 @@ public class Tracos
         {
             insumo.QuantidadeTe = quantidadeBrita * insumo.RazaoPorGrupo;
         }
+    }
+
+    public static void RecalcularAditivosTe(TracoDto traco, decimal consumo)
+    {
+        foreach (var insumo in traco.Insumos.Where(i => i.TipoInsumo == TipoInsumo.Aditivo))
+        {
+            var dosagemOriginal = insumo.Quantidade / traco.Consumo;
+            insumo.QuantidadeTe = dosagemOriginal * consumo;
+        }
+        
     }
 }
